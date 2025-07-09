@@ -1,5 +1,5 @@
 export class GetUserDTO {
-  id: number;
+  id: string;
   username: string;
   profilePhoto?: string | null;
   age: number;

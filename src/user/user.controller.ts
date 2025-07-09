@@ -31,14 +31,7 @@ export class UserController {
 
   @Delete()
   delete(@Param() id: string) {
-    const ID = Number(id);
-    if (isNaN(ID)) {
-      throw new Error('ID는 숫자여야 합니다.');
-    }
-    if (ID <= 0) {
-      throw new Error('ID는 0보다 큰 숫자여야 합니다.');
-    }
-    return this.userService.delete(ID);
+    return this.userService.delete(id);
   }
 
   @Get()

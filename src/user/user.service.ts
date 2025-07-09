@@ -11,29 +11,21 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  get(id: string) {
-    const ID = Number(id);
-    return this.userRepository.findOne({ where: { id: ID } });
+  async get(uuid: string) {
+    return this.userRepository.findOne({ where: { id: uuid } });
   }
 
-  post(userInf: CreateUserDto) {
+  async post(userInf: CreateUserDto) {
     const newData = this.userRepository.create(userInf);
 
     return this.userRepository.save(newData);
   }
 
-  delete(id: number) {
-    const ID = Number(id);
-    if (isNaN(ID)) {
-      throw new Error('ID는 숫자여야 합니다.');
-    }
-    if (ID <= 0) {
-      throw new Error('ID는 0보다 큰 숫자여야 합니다.');
-    }
-    return this.userRepository.delete({ id: ID });
+  async delete(id: string) {
+    return this.userRepository.delete({ id: id });
   }
 
-  getAll() {
+  async getAll() {
     return this.userRepository.find();
   }
 }
