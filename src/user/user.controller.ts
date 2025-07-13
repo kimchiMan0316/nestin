@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,10 +7,19 @@ import {
   NotFoundException,
   Param,
   Post,
+  Request,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GetUserDTO } from './DTO/get-user-dto';
 import { CreateUserDto } from './DTO/create-user-dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { LoginResponse } from 'src/auth/auth.service';
 
 @Controller('api/user')
 export class UserController {
@@ -27,6 +37,40 @@ export class UserController {
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.post(createUserDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/profilePhoto')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+          cb(null, uniqueName);
+        },
+      }),
+    }),
+  )
+  async createProfilePhoto(
+    @Request() req: { user: LoginResponse },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('파일이 업로드되지 않았습니다.');
+    }
+    const ID = req.user.id; // JWT에서 user ID 추출/
+
+    const photoUrl = `http://localhost:3000/uploads/${file.filename}`;
+
+    // DB에 해당 user의 profilePhoto 업데이트
+    const result = await this.userService.updateProfilePhoto(ID, photoUrl);
+
+    return {
+      message: '사진 업로드 성공',
+      profilePhoto: photoUrl,
+      result,
+    };
   }
 
   @Delete()

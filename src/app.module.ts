@@ -6,9 +6,18 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { DestinationsModule } from './destinations/destinations.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { ReviewCommentModule } from './review_comment/review_comment.module';
+import { DestinationCommentModule } from './destination_comment/destination_comment.module';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads', // 정적 파일을 제공할 경로
+      exclude: ['/api', '/upload'], // API와 겹치는 거만 제외
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client', 'build'),
       exclude: [
@@ -36,6 +45,10 @@ import { ConfigModule } from '@nestjs/config';
 
     UserModule,
     AuthModule,
+    DestinationsModule,
+    ReviewsModule,
+    ReviewCommentModule,
+    DestinationCommentModule,
   ],
 })
 export class AppModule {}

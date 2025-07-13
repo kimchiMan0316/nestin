@@ -42,6 +42,7 @@ export class AuthService {
   }
 
   createToken(userInf: LoginResponse): string {
+    console.log('🔥 JWT payload 받음:', userInf);
     const payload = {
       id: userInf.id,
       username: userInf.username,
@@ -50,7 +51,6 @@ export class AuthService {
       profilePhoto: userInf.profilePhoto || null,
       age: userInf.age,
     };
-
     return this.jwtService.sign(payload);
   }
 }

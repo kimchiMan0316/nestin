@@ -1,16 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthService, LoginResponse } from './auth.service';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { AuthService } from './auth.service';
 import { AuthLoginDTO } from './DTO/auth.login.DTO';
 import { Response } from 'express';
-import { JwtAuthGuard } from './jwt.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -36,13 +27,13 @@ export class AuthController {
         throw new Error('로그인 실패');
       }
 
-      const accessToken = this.authService.createToken(login);
+      const accessToken = await this.authService.createToken(login);
 
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 1000, // 1 hour
+        maxAge: 30 * 60 * 60 * 1000, // 30 hour
       });
 
       return {
@@ -54,14 +45,5 @@ export class AuthController {
     } catch (error) {
       throw new Error('로그인 실패: ' + error);
     }
-  }
-
-  @Get('token')
-  @UseGuards(JwtAuthGuard)
-  getToken(@Request() req: { user: LoginResponse }) {
-    if (!req.user) {
-      throw new Error('사용자 정보가 없습니다.');
-    }
-    return req;
   }
 }

@@ -12,7 +12,7 @@ import { JwtAuthGuard } from './jwt.guard';
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'defaultSecretKey',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '30h' },
     }),
   ], // Token expiration time)],
   controllers: [AuthController],

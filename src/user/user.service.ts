@@ -12,7 +12,20 @@ export class UserService {
   ) {}
 
   async get(uuid: string) {
-    return this.userRepository.findOne({ where: { id: uuid } });
+    const user = await this.userRepository.findOne({ where: { id: uuid } });
+    if (!user) {
+      return null;
+    }
+    const result = {
+      id: user.id,
+      username: user.username,
+      profilePhoto: user.profilePhoto,
+      gender: user.gender,
+      age: user.age,
+      state: user.state,
+      createAt: user.createAt,
+    };
+    return result;
   }
 
   async post(userInf: CreateUserDto) {
@@ -27,5 +40,18 @@ export class UserService {
 
   async getAll() {
     return this.userRepository.find();
+  }
+
+  async updateProfilePhoto(id: string, photoUrl: string) {
+    const user = await this.userRepository.update(
+      { id },
+      { profilePhoto: photoUrl },
+    );
+
+    if (!user.affected) {
+      throw new Error('User not found or update failed');
+    }
+
+    return { message: 'Profile photo updated successfully' };
   }
 }
