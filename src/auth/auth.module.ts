@@ -11,11 +11,12 @@ import { JwtAuthGuard } from './jwt.guard';
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'defaultSecretKey',
+      secret: '1234',
       signOptions: { expiresIn: '30h' },
     }),
   ], // Token expiration time)],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtAuthGuard],
+  exports: [JwtAuthGuard],
 })
 export class AuthModule {}

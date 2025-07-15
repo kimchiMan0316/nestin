@@ -39,8 +39,8 @@ export class UserController {
     return this.userService.post(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('/profilePhoto')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -56,6 +56,7 @@ export class UserController {
     @Request() req: { user: LoginResponse },
     @UploadedFile() file: Express.Multer.File,
   ) {
+    console.log(req.user);
     if (!file) {
       throw new BadRequestException('파일이 업로드되지 않았습니다.');
     }

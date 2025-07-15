@@ -13,7 +13,7 @@ export class User {
   @Column({ unique: true })
   userId: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({ type: 'varchar', nullable: true })
